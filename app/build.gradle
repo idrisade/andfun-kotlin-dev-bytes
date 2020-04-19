@@ -22,21 +22,31 @@ apply plugin: "androidx.navigation.safeargs"
 apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
     defaultConfig {
         applicationId "com.example.android.devbyteviewer"
         minSdkVersion 19
-        targetSdkVersion 28
+        targetSdkVersion 29
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
+        multiDexEnabled true
     }
     buildTypes {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
 
     dataBinding {
@@ -91,5 +101,8 @@ dependencies {
     kapt "androidx.room:room-compiler:$version_room"
 
     // WorkManager
-    implementation "android.arch.work:work-runtime-ktx:$version_work"
+    implementation "androidx.work:work-runtime-ktx:$version_work"
+
+    // Multidex support
+    implementation 'com.android.support:multidex:1.0.3'
 }
