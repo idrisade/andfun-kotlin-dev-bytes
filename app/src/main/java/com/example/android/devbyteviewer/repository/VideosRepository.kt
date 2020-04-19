@@ -26,16 +26,25 @@ import com.example.android.devbyteviewer.network.Network
 import com.example.android.devbyteviewer.network.asDatabaseModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 class VideosRepository(private val database: VideosDatabase) {
     val videos: LiveData<List<Video>> = Transformations.map(database.videoDao.getVideos()) {
+        Timber.i("Retrieving videos from cache")
         it.asDomainModel()
     }
 
     suspend fun refreshVideos() {
         withContext(Dispatchers.IO) {
-            val playlist = Network.devbytes.getPlaylist().await()
-            database.videoDao.insertAll(*playlist.asDatabaseModel())
+            try{
+                Timber.i("Updating playlist from network")
+                val playlist = Network.devbytes.getPlaylist().await()
+                database.videoDao.insertAll(*playlist.asDatabaseModel())
+                Timber.i("Playlist updated")
+            } catch (e: Exception){
+                Timber.e("Updated playlist not available")
+                Timber.e(e)
+            }
         }
     }
 }
